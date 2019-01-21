@@ -7,9 +7,15 @@ defmodule Aoc201812 do
   defp part1(), do: score(initial_state(), 20) |> IO.puts()
   defp part2(), do: score(initial_state(), 50_000_000) |> IO.puts()
 
+  @spec score(state, num_steps :: non_neg_integer, transitions) :: integer
+
   defp score(state, num_steps, cached_transitions \\ %{})
 
   defp score(state, 0, _cached_transitions), do: score(state)
+
+  @type plants :: String.t()
+  @type position :: integer
+  @type transitions :: %{optional(plants) => {plants, position}}
 
   defp score(state, num_steps, cached_transitions) do
     case transition(cached_transitions, state.plants, num_steps) do
@@ -31,12 +37,26 @@ defmodule Aoc201812 do
     end
   end
 
+  @spec transition(
+          transitions,
+          plants,
+          max_steps :: non_neg_integer,
+          steps :: non_neg_integer,
+          nil | plants,
+          offset :: integer
+        ) ::
+          {plants, max_steps :: integer, offset :: integer}
+          | {:cycle, steps :: non_neg_integer, offset :: integer}
+          | nil
+
   defp transition(transitions, initial_plants, max_steps, steps \\ 0, plants \\ nil, offset \\ 0)
 
   defp transition(_transitions, _initial_plants, max_steps, max_steps, plants, offset),
     do: {plants, max_steps, offset}
 
+  #
   defp transition(transitions, initial_plants, max_steps, steps, plants, offset) do
+    # check if we already have seen the current state
     case Map.fetch(transitions, plants || initial_plants) do
       {:ok, {^initial_plants, next_offset}} ->
         {:cycle, steps + 1, offset + next_offset}
@@ -45,7 +65,14 @@ defmodule Aoc201812 do
         transition(transitions, initial_plants, max_steps, steps + 1, next_plants, offset + next_offset)
 
       :error ->
-        if not is_nil(plants), do: {plants, steps, offset}, else: nil
+        # this is a new state
+        if not is_nil(plants) do
+          # ??
+          {plants, steps, offset}
+        else
+          # we didnt iterate over any transition...
+          nil
+        end
     end
   end
 
