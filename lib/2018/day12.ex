@@ -37,6 +37,9 @@ defmodule Aoc201812 do
     end
   end
 
+  # Question:
+  # What the hell is a transition!
+
   @spec transition(
           transitions,
           plants,
@@ -59,18 +62,23 @@ defmodule Aoc201812 do
     # check if we already have seen the current state
     case Map.fetch(transitions, plants || initial_plants) do
       {:ok, {^initial_plants, next_offset}} ->
+        # we have seen the inital_plants earlier
+        # so this must mean we have reached a cycle
+        # offset, steps ???
         {:cycle, steps + 1, offset + next_offset}
 
       {:ok, {next_plants, next_offset}} ->
+        # we have seen this state earlier
+        # get to the next state and update the step count and offset accordingly
         transition(transitions, initial_plants, max_steps, steps + 1, next_plants, offset + next_offset)
 
       :error ->
         # this is a new state
         if not is_nil(plants) do
-          # ??
+          # ???
           {plants, steps, offset}
         else
-          # we didnt iterate over any transition...
+          # and we didnt iterate over any transition...
           nil
         end
     end
