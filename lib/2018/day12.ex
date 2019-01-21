@@ -73,8 +73,10 @@ defmodule Aoc201812 do
 
   defp transform_plants(_other, _rules), do: ""
 
+  @spec pad_plants(state) :: state
   defp pad_plants(state), do: state |> pad_leading_plants() |> pad_trailing_plants()
 
+  @spec pad_leading_plants(state) :: state
   defp pad_leading_plants(state) do
     %{"empty" => empty} = Regex.named_captures(~r/^(?<empty>\.*)/, state.plants)
     padding_length = max(0, 4 - String.length(empty))
@@ -83,12 +85,22 @@ defmodule Aoc201812 do
     %{state | plants: plants, position: position}
   end
 
+  @spec pad_trailing_plants(state) :: state
   defp pad_trailing_plants(state) do
     %{"empty" => empty} = Regex.named_captures(~r/(?<empty>\.*)$/, state.plants)
     padding_length = max(0, 4 - String.length(empty))
     %{state | plants: to_string([state.plants, List.duplicate(?., padding_length)])}
   end
 
+  @type pattern :: String.t()
+  @type pot :: String.t()
+  @type state :: %{
+          plants: String.t(),
+          rules: %{pattern => pot},
+          position: non_neg_integer
+        }
+
+  @spec initial_state() :: state
   defp initial_state() do
     {initial_state, rules} = Enum.split(Aoc.input_lines(2018, 12), 2)
     pad_plants(%{position: 0, plants: parse_plants(initial_state), rules: parse_rules(rules)})

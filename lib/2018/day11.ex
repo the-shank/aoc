@@ -33,8 +33,9 @@ defmodule Aoc201811 do
       Map.get(summed_area, {x - 1, y - 1}, 0)
   end
 
-  defp best_square(summed_area, square_size),
-    do: Enum.reduce(square_coordinates(@grid_size - square_size + 1), nil, &better(summed_area, square_size, &1, &2))
+  defp best_square(summed_area, square_size) do
+    Enum.reduce(square_coordinates(@grid_size - square_size + 1), nil, &better(summed_area, square_size, &1, &2))
+  end
 
   defp better(summed_area, square_size, {x, y}, current_best) do
     value = square_power_level(summed_area, x, y, square_size)

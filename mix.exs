@@ -18,6 +18,6 @@ defmodule Aoc.MixProject do
   end
 
   defp deps do
-    []
+    [{:dialyxir, "~> 0.5.1"}]
   end
 end
