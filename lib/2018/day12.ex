@@ -18,6 +18,8 @@ defmodule Aoc201812 do
   @type transitions :: %{optional(plants) => {plants, position}}
 
   defp score(state, num_steps, cached_transitions) do
+    IO.puts(state.plants)
+
     case transition(cached_transitions, state.plants, num_steps) do
       {:cycle, cycle_steps, cycle_position_offset} ->
         num_cycles = div(num_steps, cycle_steps)
@@ -64,7 +66,8 @@ defmodule Aoc201812 do
       {:ok, {^initial_plants, next_offset}} ->
         # we have seen the inital_plants earlier
         # so this must mean we have reached a cycle
-        # offset, steps ???
+        # steps = number of steps consumed
+        # offset ???
         {:cycle, steps + 1, offset + next_offset}
 
       {:ok, {next_plants, next_offset}} ->
@@ -84,6 +87,7 @@ defmodule Aoc201812 do
     end
   end
 
+  @spec score(state) :: integer
   defp score(state) do
     state.plants
     |> to_charlist()
@@ -95,8 +99,12 @@ defmodule Aoc201812 do
 
   defp next_state(state) do
     next_plants = to_string(transform_plants(state.plants, state.rules))
+    # increase the position by 2 as the left 2 elements were not considered in the transformation
+    # ???
     pad_plants(%{state | plants: next_plants, position: state.position + 2})
   end
+
+  @spec transform_plants(String.t(), %{pattern => pot}) :: String.t()
 
   defp transform_plants(plants, rules)
 
