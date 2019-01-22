@@ -1,7 +1,7 @@
 defmodule Aoc201812 do
   def run() do
     part1()
-    part2()
+    # part2()
   end
 
   defp part1(), do: score(initial_state(), 20) |> IO.puts()
@@ -33,6 +33,10 @@ defmodule Aoc201812 do
 
       nil ->
         next_state = next_state(state)
+        # why is the offset being calculated as the difference between the positions here
+        # ???
+        # thought: offset is the difference between the new position and the previous position
+        # so we are caching it here so that later newstate.position = position + offset
         next_transition = {next_state.plants, next_state.position - state.position}
         cached_transitions = Map.put(cached_transitions, state.plants, next_transition)
         score(next_state, num_steps - 1, cached_transitions)
@@ -59,7 +63,6 @@ defmodule Aoc201812 do
   defp transition(_transitions, _initial_plants, max_steps, max_steps, plants, offset),
     do: {plants, max_steps, offset}
 
-  #
   defp transition(transitions, initial_plants, max_steps, steps, plants, offset) do
     # check if we already have seen the current state
     case Map.fetch(transitions, plants || initial_plants) do
@@ -89,6 +92,8 @@ defmodule Aoc201812 do
 
   @spec score(state) :: integer
   defp score(state) do
+    IO.puts("final: #{inspect(state.plants)}")
+
     state.plants
     |> to_charlist()
     |> Stream.with_index(state.position)
@@ -99,8 +104,8 @@ defmodule Aoc201812 do
 
   defp next_state(state) do
     next_plants = to_string(transform_plants(state.plants, state.rules))
-    # increase the position by 2 as the left 2 elements were not considered in the transformation
-    # ???
+    # the leftmost 2 plants were skipped while transforming the plants (..), so the position
+    # should be shifted to the right by 2 ! FINALLY I GET IT !
     pad_plants(%{state | plants: next_plants, position: state.position + 2})
   end
 
