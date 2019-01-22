@@ -18,7 +18,7 @@ defmodule Aoc201812 do
   @type transitions :: %{optional(plants) => {plants, position}}
 
   defp score(state, num_steps, cached_transitions) do
-    IO.puts(state.plants)
+    IO.puts("#{num_steps} #{state.position} #{state.plants}")
 
     case transition(cached_transitions, state.plants, num_steps) do
       {:cycle, cycle_steps, cycle_position_offset} ->
@@ -146,7 +146,11 @@ defmodule Aoc201812 do
   @spec initial_state() :: state
   defp initial_state() do
     {initial_state, rules} = Enum.split(Aoc.input_lines(2018, 12), 2)
-    pad_plants(%{position: 0, plants: parse_plants(initial_state), rules: parse_rules(rules)})
+    rules = parse_rules(rules)
+    IO.inspect(rules)
+    plants = parse_plants(initial_state)
+    IO.puts("init: #{plants}")
+    pad_plants(%{position: 0, plants: plants, rules: rules})
   end
 
   defp parse_plants(["initial state: " <> state, ""]), do: state
